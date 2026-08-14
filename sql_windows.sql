@@ -1,3 +1,162 @@
+create database windows10db;
+
+
+use windows10db;
+
+
+create table employees(id int, name varchar(20), dept varchar(20), salary int);
+
+insert into employees values(1, 'a', 'hr', 100), (2, 'b', 'hr', 200),(3, 'c', 'marketing', 300),
+(4, 'd', 'marketing', 400), (5, 'e', 'hr', 500);
+
+
+select sum(salary) from employees; -- aggreagate
+select dept, sum(salary) from employees; -- Error ( without group by koi aur column select nhi ho sakta)
+
+select name , (select sum(salary) from employees where employees.id = e.id) from employees as e;
+
+select * , sum(salary) over() from employees;
+
+select * , sum(salary) over() , sum(salary) over() - salary as diff from employees;
+
+select * , sum(salary) over() , sum(salary) over(partition by dept) as diff from employees;
+
+select * , sum(Salary) over(partition by name) from employees;
+
+CREATE TABLE employee_sales (
+    sale_id INT PRIMARY KEY,
+    employee_name VARCHAR(50),
+    department VARCHAR(50),
+    sale_date DATE,
+    sales_amount DECIMAL(10,2)
+);
+
+
+
+INSERT INTO employee_sales
+    (sale_id, employee_name, department, sale_date, sales_amount)
+VALUES
+    (1,  'Alice', 'Electronics', '2026-01-05', 1200.00),
+    (2,  'Bob',   'Electronics', '2026-01-08', 1800.00),
+    (3,  'Alice', 'Electronics', '2026-01-15', 1500.00),
+    (4,  'Charlie','Electronics','2026-01-20', 1800.00),
+    (5,  'Bob',   'Electronics', '2026-01-25', 2200.00),
+
+    (6,  'David', 'Furniture',   '2026-01-03', 2500.00),
+    (7,  'Emma',  'Furniture',   '2026-01-10', 1800.00),
+    (8,  'David', 'Furniture',   '2026-01-18', 3000.00),
+    (9,  'Frank', 'Furniture',   '2026-01-22', 1800.00),
+    (10, 'Emma',  'Furniture',   '2026-01-28', 3200.00),
+
+    (11, 'George','Clothing',    '2026-01-04', 900.00),
+    (12, 'Helen', 'Clothing',    '2026-01-09', 1400.00),
+    (13, 'George','Clothing',    '2026-01-16', 1100.00),
+    (14, 'Helen', 'Clothing',    '2026-01-21', 1400.00),
+    (15, 'Ian',   'Clothing',    '2026-01-27', 2000.00);
+    
+    select * from employee_sales;
+    
+    select employee_name ,department ,sales_amount , sum(sales_amount) over(partition by department) from employee_sales;
+    
+    select employee_name ,department ,sales_amount , count(sales_amount) over(partition by department) from employee_sales;
+    
+    select employee_name ,department ,sales_amount , sum(sales_amount) over(partition by employee_name) from employee_sales;
+    
+    select employee_name ,department ,sales_amount ,  avg(sales_amount) over(partition by department) as avgdept ,
+    round(sales_amount -avg(sales_amount) over(partition by department)) as difference
+    from employee_sales;
+    
+    select department ,sum(sales_amount) over( partition by department) as total_dept_Sale , sum(sales_amount) over() as total_comp_sale 
+    from employee_sales ;
+
+-- windows part 2
+drop database if exists windows10db;
+create database windows10db; 
+use windows10db;
+ CREATE TABLE employee_performance ( 
+ employee_id INT, employee_name VARCHAR(50), 
+ department VARCHAR(30), location VARCHAR(30),
+ performance_year INT, 
+ performance_month INT,
+ salary DECIMAL(10,2),
+ sales_amount DECIMAL(12,2),
+ rating DECIMAL(3,1) );
+ 
+  INSERT INTO employee_performance (
+  employee_id, employee_name, department, location, performance_year, performance_month, salary, sales_amount, rating)
+  VALUES (101, 'Amit', 'Sales', 'Jaipur', 2025, 1, 45000, 120000, 4.2), 
+  (102, 'Priya', 'Sales', 'Delhi', 2025, 1, 48000, 135000, 4.5), 
+  (103, 'Rahul', 'Sales', 'Jaipur', 2025, 1, 42000, 110000, 3.9), 
+  (104, 'Neha', 'Sales', 'Mumbai', 2025, 1, 52000, 150000, 4.7), 
+  (101, 'Amit', 'Sales', 'Jaipur', 2025, 2, 45000, 140000, 4.4), 
+  (102, 'Priya', 'Sales', 'Delhi', 2025, 2, 48000, 125000, 4.1), 
+  (103, 'Rahul', 'Sales', 'Jaipur', 2025, 2, 42000, 130000, 4.2), 
+  (104, 'Neha', 'Sales', 'Mumbai', 2025, 2, 52000, 160000, 4.8), 
+  (101, 'Amit', 'Sales', 'Jaipur', 2025, 3, 45000, 155000, 4.6),
+  (102, 'Priya', 'Sales', 'Delhi', 2025, 3, 48000, 145000, 4.4), 
+  (103, 'Rahul', 'Sales', 'Jaipur', 2025, 3, 42000, 135000, 4.3),
+  (104, 'Neha', 'Sales', 'Mumbai', 2025, 3, 52000, 155000, 4.6),
+  (105, 'Karan', 'IT', 'Jaipur', 2025, 1, 65000, 90000, 4.1), 
+  (106, 'Sneha', 'IT', 'Delhi', 2025, 1, 70000, 95000, 4.4), 
+  (107, 'Vikas', 'IT', 'Mumbai', 2025, 1, 62000, 85000, 3.8),
+  (108, 'Pooja', 'IT', 'Jaipur', 2025, 1, 68000, 100000, 4.6),
+  (105, 'Karan', 'IT', 'Jaipur', 2025, 2, 65000, 105000, 4.3),
+  (106, 'Sneha', 'IT', 'Delhi', 2025, 2, 70000, 110000, 4.5), 
+  (107, 'Vikas', 'IT', 'Mumbai', 2025, 2, 62000, 98000, 4.0), 
+  (108, 'Pooja', 'IT', 'Jaipur', 2025, 2, 68000, 120000, 4.7), 
+  (105, 'Karan', 'IT', 'Jaipur', 2025, 3, 65000, 115000, 4.5), 
+  (106, 'Sneha', 'IT', 'Delhi', 2025, 3, 70000, 125000, 4.7), 
+  (107, 'Vikas', 'IT', 'Mumbai', 2025, 3, 62000, 105000, 4.2), 
+  (108, 'Pooja', 'IT', 'Jaipur', 2025, 3, 68000, 130000, 4.8),
+  (109, 'Ravi', 'HR', 'Delhi', 2025, 1, 40000, 60000, 3.9), 
+  (110, 'Anjali', 'HR', 'Jaipur', 2025, 1, 43000, 65000, 4.2), 
+  (111, 'Manish', 'HR', 'Mumbai', 2025, 1, 41000, 58000, 3.7), 
+  (109, 'Ravi', 'HR', 'Delhi', 2025, 2, 40000, 70000, 4.1),
+  (110, 'Anjali', 'HR', 'Jaipur', 2025, 2, 43000, 72000, 4.4), 
+  (111, 'Manish', 'HR', 'Mumbai', 2025, 2, 41000, 68000, 3.9), 
+  (109, 'Ravi', 'HR', 'Delhi', 2025, 3, 40000, 75000, 4.3), 
+  (110, 'Anjali', 'HR', 'Jaipur', 2025, 3, 43000, 78000, 4.5), 
+  (111, 'Manish', 'HR', 'Mumbai', 2025, 3, 41000, 73000, 4.1);
+  
+  select * from employee_performance;
+  
+  select * , sum(salary)  over() as total_slary from employee_performance;
+  
+  select * , sum(sales_amount) over(partition by location) as total_sales from employee_performance;
+  
+  select  * from employee_performance order by sales_amount; 
+  
+  -- cumulative sum of sales
+  select * , sum(sales_amount) over(order by sales_amount) from employee_performance;
+  
+  select * , sum(sales_amount) over()  , 
+  sum(sales_amount) over(partition by location) , 
+  sum(sales_amount) over(partition by location order by sales_amount) from employee_performance;
+  
+  select * , sum(sales_amount) over(order by location) from employee_performance;
+  
+  select * , count(sales_amount) over(order by location) from employee_performance;
+  
+  -- row number
+  
+  select employee_id , employee_name ,  department ,location , salary , sales_amount ,
+  row_number() over(order by salary desc) as ranks from employee_performance;
+  
+  -- ranks
+  
+  select employee_id , employee_name ,  department ,location , salary , sales_amount ,
+  rank() over(order by salary desc) as ranks from employee_performance; 
+  
+  select employee_id , employee_name ,  department ,location , salary , sales_amount ,
+  rank() over(partition by location order by salary desc) as ranks from employee_performance;
+  
+  -- dense rank
+  
+  select employee_id , employee_name ,  department ,location , salary , sales_amount ,
+  dense_rank() over(order by salary desc) as ranks from employee_performance;
+  
+--windows part3  
+
 show databases;
 create database windowsdb;
 use windowsdb;
@@ -108,6 +267,8 @@ sum(amount) over(order by amount rows between unbounded preceding and current ro
 
 select customer_name , order_id,customer_id , amount,order_date,
 sum(amount) over( partition by customer_id order by order_date rows between 1 preceding and 1 following) as lala from orders; 
+
+
 
 
 
